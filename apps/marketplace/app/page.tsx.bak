@@ -1,0 +1,127 @@
+'use client';
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useState, useEffect } from "react";
+import { Wallet, Coins, Key } from 'lucide-react'; 
+import { X402Client, ServiceInfo } from "@x402/sdk"; // Ensure you can import from workspace
+import { Network, Account } from "@aptos-labs/ts-sdk";
+
+export default function Page() {
+  const { connect, disconnect, account, connected, wallets } = useWallet();
+  const [services, setServices] = useState<ServiceInfo[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch from chain
+  useEffect(() => {
+      const fetchServices = async () => { 
+        setLoading(true);
+        // We use a dummy account to init read-only client or similar
+        // Or refactor Client to not require account for reads. 
+        // For hackathon, just create ephemeral.
+        const ephemAccount = Account.generate(); 
+        
+        const client = new X402Client({
+            account: ephemAccount, 
+            network: Network.TESTNET,
+            // Hardcode or env var for your deployed module
+            moduleId: process.env.NEXT_PUBLIC_X402_MODULE_ID || "0xc2b5d4ca50ea5d02324204d80d21092ae7824c015b6d7734479526713583907e::x402" 
+        });
+
+        const list = await client.getServices();
+        if (list.length > 0) {
+            setServices(list);
+        }
+        setLoading(false);
+      };
+      
+      fetchServices();
+  }, []);
+
+  const onConnect = () => {
+      const petra = wallets?.find(w => w.name === "Petra");
+      if(petra) connect(petra.name);
+  };
+  
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
+  if (!isMounted) return null;
+
+  return (
+    <div className="max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-12">
+        <div>
+            <h2 className="text-3xl font-bold mb-2">Discover Agentic APIs</h2>
+            <p className="text-gray-500">Pay-per-request using x402 protocol</p>
+        </div>
+        
+        <div className="flex gap-4 items-center">
+            {connected && account ? (
+                <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="font-mono text-sm">{account.address.toString().slice(0, 6)}...{account.address.toString().slice(-4)}</span>
+                    <button onClick={disconnect} className="text-xs text-red-500 ml-2 hover:underline">Disconnect</button>
+                </div>
+            ) : (
+                 <button 
+                    onClick={onConnect}
+                    className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
+                >
+                    Connect Wallet
+                </button>
+            )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {connected && (
+             <div className="border border-dashed border-gray-300 p-6 rounded-xl bg-gray-50 flex flex-col justify-center items-center text-center">
+                <div className="bg-white p-3 rounded-full shadow-sm mb-4">
+                    <Wallet className="w-6 h-6 text-blue-500" />
+                </div>
+                <h3 className="font-bold mb-1">Create Usage Wallet</h3>
+                <p className="text-sm text-gray-500 mb-4">Fund a dedicated wallet for AI agents</p>
+                <button className="text-blue-600 text-sm font-medium hover:underline">
+                    Initalize via CLI &rarr;
+                </button>
+             </div>
+        )}
+
+        {loading ? (
+             <div className="col-span-full py-20 text-center text-gray-500">Loading market data...</div>
+        ) : services.length === 0 ? (
+            <div className="col-span-full py-20 text-center border-dashed border-2 rounded-xl">
+                <p className="font-bold text-gray-600 mb-2">No Services Found</p>
+                <p className="text-sm text-gray-400">Be the first to publish an agentic API.</p>
+            </div>
+        ) : services.map((service, i) => (
+            <div key={i} className="border p-6 rounded-xl hover:shadow-lg transition bg-white">
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="font-bold text-lg">{service.name}</h3>
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-mono">Active</span>
+                </div>
+                
+                <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Coins className="w-4 h-4" />
+                        <span>{service.base_price} Octas / call</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Key className="w-4 h-4" />
+                        <span className="truncate w-full font-mono text-xs">{service.provider}</span>
+                    </div>
+                </div>
+
+                <div className="flex gap-2">
+                    <button className="flex-1 bg-black text-white py-2 rounded-lg text-sm font-medium hover:bg-gray-800">
+                        Test
+                    </button>
+                    <button className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50">
+                        Docs
+                    </button>
+                </div>
+            </div>
+        ))}
+      </div>
+    </div>
+  );
+}

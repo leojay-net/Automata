@@ -1,0 +1,39 @@
+{
+  "name": "automata-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@aptos-labs/wallet-adapter-react": "^8.2.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "@telegram-apps/bridge": "^2.11.0",
+    "@types/three": "^0.160.0",
+    "@wallet-standard/core": "^1.1.1",
+    "@automata-protocol/sdk": "*",
+    "aptos": "^1.22.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.29.2",
+    "got": "^14.6.6",
+    "lucide-react": "^0.294.0",
+    "next": "^14.0.0",
+    "petra-plugin-wallet-adapter": "^0.4.5",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "recharts": "^3.7.0",
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "autoprefixer": "^10.0.0",
+    "postcss": "^8.0.0",
+    "tailwindcss": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}

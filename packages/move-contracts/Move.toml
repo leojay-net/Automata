@@ -1,0 +1,12 @@
+[package]
+name = "automata_core"
+version = "0.0.1"
+authors = []
+
+[addresses]
+automata = "_"
+std = "0x1"
+aptos_framework = "0x1"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework", rev = "main" }

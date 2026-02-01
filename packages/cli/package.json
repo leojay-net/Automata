@@ -1,0 +1,27 @@
+{
+  "name": "@automata-protocol/cli",
+  "version": "0.1.0",
+  "bin": {
+    "automata": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npx mocha --import=tsx tests/integration.test.ts"
+  },
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.9.1",
+    "@automata-protocol/sdk": "*",
+    "chalk": "^5.0.0",
+    "commander": "^11.0.0",
+    "dotenv": "^16.0.0",
+    "inquirer": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.0.0",
+    "mocha": "^11.7.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0"
+  }
+}
